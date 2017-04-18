@@ -225,6 +225,7 @@ test.close();
 void Controller::choose_sales_assoc() {
 ofstream assoc;
 int mavs;
+sting convert;
 Sales_associate employ1("Dirk Nowitzki",1);
 Sales_associate employ2("Jason Terry",2);
 Sales_associate employ3("Jason Kidd",3);
@@ -233,8 +234,8 @@ Sales_associate employ4("Steve Nash",4);
 assoc.open("Sales Associate", ios::app);
 
 convert = fl_input("(1) Dirk Nowitzki\n(2) Jason Terry\n(3) Jason Kidd\n(4) Steve Nash\n\nWhich sales associate would you like to help you?");
-marvel = std::stoi(convert);
-switch(marvel) {
+mavs = std::stoi(convert);
+switch(mavs) {
  case(1):
   shop.choose_new_sales_associate(employ1);
   fl_message("You have choosen Dirk Nowitzki.\n");
@@ -265,7 +266,7 @@ assoc.close();
 void Controller::create_order() {
 ofstream order;
 int choice;
-string date,name,phone_number,email_address;
+string date,name,phone_number,email_address,convert_cust,customer_num,convert_ord,order_num,convert;
 int order_number = rand() % 1000;
 int customer_number = rand() % 100;
 Customer custom("a",0,"a","a"); //Initializing to change later
