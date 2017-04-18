@@ -12,7 +12,7 @@ debug: main
 rebuild: clean main
 
 main: robot.cpp
-	$(CXX) $(CXXFLAGS) $(fltk-config --cxxflags) -o main robot.cpp $(LDF
+	$(CXX) $(CXXFLAGS) $(fltk-config --cxxflags) -o main robot.cpp $(LDF)
 
 clean:
 	-rm -f *.o *~ a.out
