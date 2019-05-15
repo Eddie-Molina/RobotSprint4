@@ -188,7 +188,7 @@ choice = std::stoi(cmd);
   }
 
   else {
-   fl_message("Exiting Program...\n");
+   fl_message("Exiting Program.\n");
    exit(0);
   }
  execute(); //recursion, while loop won't repeat print statement
@@ -198,9 +198,32 @@ void Controller::create_customer() {
 srand(time(NULL));
 ofstream test;
 ifstream read;
-char check;
-int icheck, customer_number = rand() % 1000;
-string name, phone_number, email_address, read_file, customer_num, convert = to_string(customer_number);
+int customer_number = rand() % 1000;
+string name, phone_number, email_address, read_file, customer_num, convert = to_string(customer_number), line;
+
+read.open("Customers");
+if(read.is_open()) {
+  for(int i = 0;getline(read,line); i++) {
+    
+    if( i == 0){
+     customer_number = atoi(line.c_str());
+    }
+
+    else if( i == 1){
+     name = line;
+    }
+
+    else if( i == 2){
+     phone_number = line;
+    }
+
+    else if( i == 3){
+     email_address = line;
+     shop.create_new_customer(Customer(name,customer_number,phone_number,email_address));
+    }
+  }
+}
+read.close();
 
 test.open("Customers", ios::app);
 
@@ -225,11 +248,36 @@ test.close();
 void Controller::choose_sales_assoc() {
 ofstream assoc;
 int mavs;
-sting convert;
+ifstream read;
+string convert, line;
+
 Sales_associate employ1("Dirk Nowitzki",1);
 Sales_associate employ2("Jason Terry",2);
 Sales_associate employ3("Jason Kidd",3);
 Sales_associate employ4("Steve Nash",4);
+
+
+read.open("Sales Associate");
+if(read.is_open()) {
+  while(getline(read,line)) {
+    
+    if( line == "Dirk Nowitzk"){
+     shop.choose_new_sales_associate(employ1);
+    }
+
+    else if( line == "Jason Terry"){
+     shop.choose_new_sales_associate(employ2);    
+    }
+
+    else if( line == "Jason Kidd"){
+     shop.choose_new_sales_associate(employ3);
+    }
+
+    else if( line == "Steve Nash"){
+     shop.choose_new_sales_associate(employ4);    }
+  }
+}
+read.close();
 
 assoc.open("Sales Associate", ios::app);
 
@@ -265,12 +313,72 @@ assoc.close();
 
 void Controller::create_order() {
 ofstream order;
+ifstream read;
 int choice;
-string date,name,phone_number,email_address,convert_cust,customer_num,convert_ord,order_num,convert;
+string date,name,phone_number,email_address,convert_cust,customer_num,convert_ord,order_num,convert,line;
 int order_number = rand() % 1000;
-int customer_number = rand() % 100;
-Customer custom("a",0,"a","a"); //Initializing to change later
-Sales_associate employ("h",0); //Initializing to change later
+int customer_number = rand() % 1000;
+Customer custom("Customer",0,"Customer","Customer"); 
+Sales_associate employ("SA",0); 
+
+read.open("Orders");
+if(read.is_open()) {
+ for(int i = 0;getline(read,line); i++) {
+
+  if(i == 0){
+   date = line; 
+  }
+
+  else if( i == 1){
+   order_number = atoi(line.c_str());
+  }
+
+  else if( i == 2){
+   customer_number = atoi(line.c_str());
+  }
+
+  else if( i == 3){
+   phone_number = line;
+  }
+
+  else if( i == 4){
+   name = line;
+   
+    }
+
+  else if( i == 5){
+   phone_number = line;
+  }
+
+  else if( i == 6){
+   email_address = line;
+   custom = Customer(name,customer_number,phone_number,email_address);
+  }
+
+  else if( i == 7){
+
+   if (line == "Dirk"){
+    employ = Sales_associate("Dirk",1);
+   }
+
+   else if (line == "Dirk"){
+    employ = Sales_associate("Dirk",1);
+   }
+
+   else if (line == "Dirk"){
+    employ = Sales_associate("Dirk",1);
+   }
+
+   else if (line == "Dirk"){
+    employ = Sales_associate("Dirk",1);
+   }
+
+   Order _order(order_number,date,custom,employ);
+   shop.create_new_order(_order);
+    }
+  }
+}
+read.close();
 order.open("Orders", ios::app);
 
 
@@ -325,12 +433,12 @@ switch(choice) {
  order.close();
 }
 
+
 void Controller::pre_defined_models() {
 ofstream rbot_model;
+ifstream read;
 int choice;
-string convert;
-
-rbot_model.open("Robot models", ios::app);
+string convert,line;
 
 Head head1("Basic Head",100,100.00,"basic bot",50.0);
 Torso torso1("Basic Torso",100,100.00,"basic bot",2,1);     
@@ -350,6 +458,30 @@ Battery battery3("Deluxe Battery",300,10000.00,"Deluxe bot",500.0,750.0);
 Locomotor locomotor3("Deluxe Locomotor",300,10000.00,"Deluxe bot",500.0);
 Arm arm3("Deluxe Arm",300,10000.00,"Deluxe bot",500.0);
 
+read.open("Robot models");
+
+ while(getline(read,line)){
+  if (line == "Basic Bot:")
+  {
+    Robot_model bbot(head1,torso1,battery1,locomotor1,arm1,"Basic bot",1);
+    shop.create_new_robot_model(bbot);
+  }
+
+  else if (line == "Advanced Bot:")
+  {
+    Robot_model abot(head2,torso2,battery2,locomotor2,arm2,"Advanced bot",2);
+    shop.create_new_robot_model(abot);
+  }
+
+  else if (line == "Deluxe Bot:")
+  {
+    Robot_model dbot(head3,torso3,battery3,locomotor3,arm3,"Deluxe bot",3);
+    shop.create_new_robot_model(dbot);
+  }
+
+ }
+
+read.close();
 convert = fl_input("Which robot would you like?\n(0)Basic Bot\n(1)Advanced Bot\n(2)Deluxe Bot\n");
 choice = std::stoi(convert);
 
@@ -389,9 +521,137 @@ rbot_model.close();
 }
 void Controller::create_new_robot_parts() {
 ofstream part;
-string name, input, menu, mod_num, description, pow, numero_arm, max_ener, battery_compart, success;
-int model_number, bat_compart, num_arms, get_out; 
+ifstream read;
+string name, input, menu, mod_num, description, pow, numero_arm, max_ener, battery_compart, success,line,check;
+int model_number, bat_compart, num_arms, get_out;
 double cost, power,max_energy;
+read.open("Robot parts");
+
+while(getline(read,line)){
+ if (line == "Head: ")
+ {
+  for(int i=0; getline(read,line); i++){
+   if (i == 0)
+   {
+    name = line;
+   }
+   else if (i == 1){
+    model_number = atoi(line.c_str());
+   }
+   else if (i == 2){
+    cost = atoi(line.c_str());
+   }
+   else if (i == 3){
+    description = line;
+   }
+   else if(i == 4){
+    power = atoi(line.c_str());
+   }
+  }
+  shop.create_new_robot_part(Head(name,model_number,cost,description,power));
+ }
+
+ else if (line == "Torso: "){
+
+  for(int i=0; getline(read,line); i++){
+   if (i == 0)
+   {
+    name = line;
+   }
+   else if (i == 1){
+    model_number = atoi(line.c_str());
+   }
+   else if (i == 2){
+    cost = atoi(line.c_str());
+   }
+   else if (i == 3){
+    description = line;
+   }
+   else if(i == 4){
+    bat_compart = atoi(line.c_str());
+   }
+   else if(i == 5){
+    num_arms = atoi(line.c_str());
+   }
+  }
+  shop.create_new_robot_part(Torso(name,model_number,cost,description,bat_compart,num_arms));
+ }
+
+  else if (line == "Battery:"){
+
+  for(int i=0; getline(read,line); i++){
+   if (i == 0)
+   {
+    name = line;
+   }
+   else if (i == 1){
+    model_number = atoi(line.c_str());
+   }
+   else if (i == 2){
+    cost = atoi(line.c_str());
+   }
+   else if (i == 3){
+    description = line;
+   }
+   else if(i == 4){
+    power = atoi(line.c_str());
+   }
+   else if(i == 5){
+    max_energy = atoi(line.c_str());
+   }
+  }
+  shop.create_new_robot_part(Battery(name,model_number,cost,description,power,max_energy));
+ }
+
+  else if (line == "Locomotor: "){
+
+  for(int i=0; getline(read,line); i++){
+   if (i == 0)
+   {
+    name = line;
+   }
+   else if (i == 1){
+    model_number = atoi(line.c_str());
+   }
+   else if (i == 2){
+    cost = atoi(line.c_str());
+   }
+   else if (i == 3){
+    description = line;
+   }
+   else if(i == 4){
+    power = atoi(line.c_str());
+   }
+  }
+  shop.create_new_robot_part(Locomotor(name,model_number,cost,description,power));
+ }
+
+  else if (line == "Arm: "){
+
+  for(int i=0; getline(read,line); i++){
+   if (i == 0)
+   {
+    name = line;
+   }
+   else if (i == 1){
+    model_number = atoi(line.c_str());
+   }
+   else if (i == 2){
+    cost = atoi(line.c_str());
+   }
+   else if (i == 3){
+    description = line;
+   }
+   else if(i == 4){
+    power = atoi(line.c_str());
+   }
+  }
+  shop.create_new_robot_part(Arm(name,model_number,cost,description,power));
+ }
+
+}
+
+read.close();
 
 part.open("Robot parts", ios::app);
 
@@ -414,7 +674,7 @@ while(get_out != 0) {
    power = std::stoi(pow);
    
    cost = 1000;
-   fl_message("Cost for all custom heads is $1000 NON-NEGOTIABLE\n");
+   fl_message("Cost for all custom heads is $1000.\n");
    shop.create_new_robot_part(Head(name,model_number,cost,description,power));
    success = "Successfully created " + name;
    fl_message(success.c_str());
@@ -439,7 +699,7 @@ while(get_out != 0) {
    
 
    cost = 2000;
-   fl_message("Cost for all custom torsos is $2000 NON-NEGOTIABLE\n");
+   fl_message("Cost for all custom torsos is $2000.\n");
    shop.create_new_robot_part(Torso(name,model_number,cost,description,bat_compart,num_arms));
    success = "Successfully created " + name;
    fl_message(success.c_str());
@@ -461,7 +721,7 @@ while(get_out != 0) {
    max_energy = std::stoi(max_ener);
 
    cost = 1000;
-   fl_message("Cost for all custom batteries is $1000 each NON-NEGOTIABLE\n");
+   fl_message("Cost for all custom batteries is $1000.\n");
    shop.create_new_robot_part(Battery(name,model_number,cost,description,power,max_energy));
    success = "Successfully created " + name;
    fl_message(success.c_str());
@@ -479,8 +739,8 @@ while(get_out != 0) {
    pow = fl_input("What is the max power you want to put on your locomotor?\n");
    power = std::stoi(pow);
 
-   cost = 3000;
-   fl_message("Cost for all custom locomotors is $3000 NON-NEGOTIABLE\n");
+   cost = 2500;
+   fl_message("Cost for all custom locomotors is $2500.\n");
    shop.create_new_robot_part(Locomotor(name,model_number,cost,description,power));
    success = "Successfully created " + name;
    fl_message(success.c_str());
@@ -500,7 +760,7 @@ while(get_out != 0) {
    power = std::stoi(pow);
 
    cost = 1000;
-   fl_message("Cost for all custom arms is $1000 each NON-NEGOTIABLE\n");
+   fl_message("Cost for all custom arms is $1000.\n");
    shop.create_new_robot_part(Arm(name,model_number,cost,description,power));
    success = "Successfully created " + name;
    fl_message(success.c_str());
@@ -521,20 +781,150 @@ part.close();
 }
 
 void Controller::create_new_robot_model() {
+
 ofstream model;
-string name, input, menu, mod_num, description, pow, numero_arm, max_ener, battery_compart, success;
-int model_number, bat_compart, num_arms, get_out = 1; //get_out is to break the loop
+ifstream read;
+string name, input, menu, mod_num, description, pow, numero_arm, max_ener, battery_compart, success, line;
+int model_number, bat_compart, num_arms, get_out = 1; 
 double cost, power,max_energy;
 
+Head head("Head",1,1.00,"head",1.0);
+Torso torso("Torso",1,1.00,"torso",1,1);      
+Battery battery("Battery",1,1.00,"battery",1.0,1.0);
+Locomotor locomotor("Locomotor",1,1.00,"locomotor",1.0);
+Arm arm("Arm",1,1.00,"arm",1.0);
+
+read.open("Robot models");
+while(read.is_open()){
+ for(int g = 0;getline(read,line); g++){
+  if (g == 0)
+  {
+   for(int i=0; getline(read,line); i++){
+    if (i == 0)
+    {
+     name = line;
+    }
+    else if (i == 1){
+     model_number = atoi(line.c_str());
+    }
+    else if (i == 2){
+     cost = atoi(line.c_str());
+    }
+    else if (i == 3){
+     description = line;
+    }
+    else if(i == 4){
+     power = atoi(line.c_str());
+    }
+   }
+   head = Head(name,model_number,cost,description,power);
+  }
+
+    else if (g == 1 ){
+
+    for(int i=0; getline(read,line); i++){
+     if (i == 0)
+     {
+      name = line;
+     }
+     else if (i == 1){
+      model_number = atoi(line.c_str());
+     }
+     else if (i == 2){
+      cost = atoi(line.c_str());
+     }
+     else if (i == 3){
+      description = line;
+     }
+     else if(i == 4){
+      bat_compart = atoi(line.c_str());
+     }
+     else if(i == 5){
+      num_arms = atoi(line.c_str());
+     }
+   }
+  torso = Torso(name,model_number,cost,description,bat_compart,num_arms);
+ }
+
+  else if (g == 2){
+
+  for(int i=0; getline(read,line); i++){
+   if (i == 0)
+   {
+    name = line;
+   }
+   else if (i == 1){
+    model_number = atoi(line.c_str());
+   }
+   else if (i == 2){
+    cost = atoi(line.c_str());
+   }
+   else if (i == 3){
+    description = line;
+   }
+   else if(i == 4){
+    power = atoi(line.c_str());
+   }
+   else if(i == 5){
+    max_energy = atoi(line.c_str());
+   }
+  }
+
+  battery = Battery(name,model_number,cost,description,power,max_energy);
+ }
+
+  else if (g == 3){
+
+  for(int i=0; getline(read,line); i++){
+   if (i == 0)
+   {
+    name = line;
+   }
+   else if (i == 1){
+    model_number = atoi(line.c_str());
+   }
+   else if (i == 2){
+    cost = atoi(line.c_str());
+   }
+   else if (i == 3){
+    description = line;
+   }
+   else if(i == 4){
+    power = atoi(line.c_str());
+   }
+  }
+  locomotor = Locomotor(name,model_number,cost,description,power);
+ }
+
+  else if (g == 4){
+
+  for(int i=0; getline(read,line); i++){
+   if (i == 0)
+   {
+    name = line;
+   }
+   else if (i == 1){
+    model_number = atoi(line.c_str());
+   }
+   else if (i == 2){
+    cost = atoi(line.c_str());
+   }
+   else if (i == 3){
+    description = line;
+   }
+   else if(i == 4){
+    power = atoi(line.c_str());
+   }
+  }
+  arm = Arm(name,model_number,cost,description,power);
+ }
+   Robot_model robot_model(head, torso, battery, locomotor, arm,name,model_number);
+   shop.create_new_robot_model(robot_model);
+ }
+ read.close();
+}
+
 model.open("Robot models", ios::app);
-
-
-Head head("Head",1,1.00,"Head",1.0);
-Torso torso("Torso",1,1.00,"Torso",1,1);      ///Initialized so no errors arise
-Battery battery("Battery",1,1.00,"Battery",1.0,1.0);
-Locomotor locomotor("Locomotor",1,1.00,"Locomotor",1.0);
-Arm arm("Arm",1,1.00,"Arm",1.0);
-
 
 while(get_out != 0) {
 
@@ -551,9 +941,9 @@ while(get_out != 0) {
    pow = fl_input("How much power do you want your head to have?\n");
    power = std::stoi(pow);
    
-   cost = 1000;
-   fl_message("Cost for all custom heads is $1000 NON-NEGOTIABLE\n");
-   shop.create_new_robot_part(Head(name,model_number,cost,description,power));
+   cost = 1100;
+   fl_message("Cost for all custom heads is $1100.\n");
+   head = Head(name,model_number,cost,description,power);
    success = "Successfully created " + name;
    model << name <<" head specs:\n" << "Model Number: "<< model_number << '\n' << "Cost: "<< cost << '\n' << "Description: "<< description << '\n' << "Power: " << power << "\n\n";
    }
@@ -575,8 +965,8 @@ while(get_out != 0) {
    
 
    cost = 2000;
-   fl_message("Cost for all custom torsos is $2000 NON-NEGOTIABLE\n");
-   shop.create_new_robot_part(Torso(name,model_number,cost,description,bat_compart,num_arms));
+   fl_message("Cost for all custom torsos is $2000.\n");
+   torso = Torso(name,model_number,cost,description,bat_compart,num_arms);
    success = "Successfully created " + name;
    fl_message(success.c_str());
    model << name << " torso specs:\n" << "Model Number: "<< model_number << '\n' << "Cost: " << cost << '\n' << "Description: "<< description << '\n' << "Number of battery compartments: "<< bat_compart << '\n' << "Number of arms: "<< num_arms <<"\n\n";
@@ -595,9 +985,9 @@ while(get_out != 0) {
    max_ener = fl_input("What is the max energy you want to put on your battery?\n");
    max_energy = std::stoi(max_ener);
 
-   cost = 1000;
-   fl_message("Cost for all custom batteries is $1000 each NON-NEGOTIABLE\n");
-   shop.create_new_robot_part(Battery(name,model_number,cost,description,power,max_energy));
+   cost = 1200;
+   fl_message("Cost for all custom batteries is $1200.\n");
+   battery = Battery(name,model_number,cost,description,power,max_energy);
    success = "Successfully created " + name;
    fl_message(success.c_str());
    model << name << " battery specs:\n" << "Model Number: "<< model_number << '\n' << "Cost: "<< cost << '\n' << "Description: " << description << '\n' << "Power: "<< power << '\n' << "Max Energy: "<< max_energy << "\n\n";
@@ -613,9 +1003,9 @@ while(get_out != 0) {
    pow = fl_input("What is the max power you want to put on your locomotor?\n");
    power = std::stoi(pow);
 
-   cost = 3000;
-   fl_message("Cost for all custom locomotors is $3000 NON-NEGOTIABLE\n");
-   shop.create_new_robot_part(Locomotor(name,model_number,cost,description,power));
+   cost = 2000;
+   fl_message("Cost for all custom locomotors is $2000.\n");
+   locomotor = Locomotor(name,model_number,cost,description,power);
    success = "Successfully created " + name;
    fl_message(success.c_str());
    model << name << " locomotor specs:\n" << "Model Number: "<< model_number << '\n' << "Cost: "<< cost << '\n' << "Description: "<< description << '\n' << "Max power: "<< power << "\n\n";
@@ -631,9 +1021,9 @@ while(get_out != 0) {
    pow = fl_input("What is the max power you want to put on your arms?\n");
    power = std::stoi(pow);
 
-   cost = 1000;
-   fl_message("Cost for all custom arms is $1000 each NON-NEGOTIABLE\n");
-   shop.create_new_robot_part(Arm(name,model_number,cost,description,power));
+   cost = 1500;
+   fl_message("Cost for all custom arms is $1500.\n");
+   arm = Arm(name,model_number,cost,description,power);
    success = "Successfully created " + name;
    fl_message(success.c_str());
    model << name << " arm specs:\n" << "Model Number: "<< model_number << '\n' << "Cost: "<< cost << '\n' << "Description: "<< description << '\n' << "Max power: " << power << "\n\n"; 
@@ -658,8 +1048,82 @@ while(get_out != 0) {
 model.close();
 }
 
-int main() {
-Controller controller;
-controller.execute();
+//WIDGETS
+Fl_Window *win;
+Fl_Menu_Bar *menubar;
+
+//CALLBACKS
+void quitCB(Fl_Widget* w, void* p) {win->hide();}
+
+void create_robot_partsCB(Fl_Widget* w, void* p) {
+ Controller controller;
+ controller.execute(0);
 }
+
+void create_robot_modelCB(Fl_Widget* w, void* p) {
+ Controller controller;
+ controller.execute(1);
+}
+
+void create_pre_defined_modelCB(Fl_Widget* w, void* p) {
+ Controller controller;
+ controller.execute(2);
+}
+void create_customerCB(Fl_Widget* w, void* p) {
+ Controller controller;
+ controller.execute(3);
+}
+
+void choose_sales_associateCB(Fl_Widget* w, void* p) {
+ Controller controller;
+ controller.execute(4);
+}
+
+void create_orderCB(Fl_Widget* w, void* p) {
+ Controller controller;
+ controller.execute(5);
+}
+
+//MENU
+
+Fl_Menu_Item menuitems[] = {
+  { "&File",0,0,0,FL_SUBMENU },
+   {"&Quit", FL_CTRL + 'q', (Fl_Callback*)quitCB},
+   {0},
+
+  { "&Robot",0,0,0,FL_SUBMENU },
+   {"Create Robot Parts", 0, (Fl_Callback*)create_robot_partsCB},
+   {"Create Robot Model", 0, (Fl_Callback*)create_robot_modelCB},
+   {"Create Pre-Defined Model", 0, (Fl_Callback*)create_pre_defined_modelCB},
+   {0},
+
+  { "&Customer Information",0,0,0,FL_SUBMENU },
+   {"Add Customer", 0, (Fl_Callback*)create_customerCB},
+   {"Choose sales associate", 0, (Fl_Callback*)choose_sales_associateCB},
+   {0},
+
+  { "&Order",0,0,0,FL_SUBMENU },
+   {"order", 0, (Fl_Callback*)create_orderCB},
+   {0},  
+
+  {0}
+};
+
+int main() {
+
+  const int w = 400;
+  const int h = 300;
+ 
+  win = new Fl_Window{w,h,"Robot's Rock"};
+  win->color(FL_WHITE);
+
+  menubar = new Fl_Menu_Bar(0, 0, w, 40);
+  menubar->menu(menuitems);
+
+  win->end();
+  win->show(); 
+  
+  return(Fl::run()); 
+}
+
 
